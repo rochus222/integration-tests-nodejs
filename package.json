@@ -1,0 +1,26 @@
+{
+  "name": "mysql-integration-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha tests/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rochus222/integration-tests-nodejs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rochus222/integration-tests-nodejs/issues"
+  },
+  "homepage": "https://github.com/rochus222/integration-tests-nodejs#readme",
+  "dependencies": {
+    "mocha": "^6.2.0",
+    "mysql": "^2.17.1"
+  }
+}
