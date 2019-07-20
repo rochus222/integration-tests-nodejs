@@ -1,25 +1,26 @@
-/*
-CREATE TABLE books (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
-    name VARCHAR(30), 
-    author VARCHAR(30)
-);
-*/
-
-
-const db = require("./util/db-driver");
+const Db = require("./util/db-driver");
 const BooksDao = require("./dao/books-dao");
+const express = require('express')
+const app = express()
 
+const db = new Db({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'admin',
+    database : 'books'
+});
 
-async function main() {
+db.connect();
+
+app.get('/books', async (req, res) => {
     try {
-        await db.connect();
         const booksDao = new BooksDao(db);
-        console.log(await booksDao.findAll());
-
-    } catch(err) {
+        const result = await booksDao.findAll();
+        return res.status(200).json(result);
+    } catch (err) {
         console.error(err);
+        return res.status(500).send('There was an error when processing request.');
     }
-}
-
-main();
+})
+ 
+app.listen(3000);
