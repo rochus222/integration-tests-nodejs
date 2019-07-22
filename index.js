@@ -1,14 +1,11 @@
+const config = require("./config/config");
 const Db = require("./util/db-driver");
-const BooksDao = require("./dao/books-dao");
-const express = require('express')
-const app = express()
+const BooksDao = require("./model/books");
+const express = require('express');
+const app = express();
 
-const db = new Db({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'admin',
-    database : 'books'
-});
+
+const db = new Db(config.dbConnection);
 
 db.connect();
 
