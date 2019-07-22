@@ -15,34 +15,27 @@ class MockedDb extends DbDriver{
     }
 };
 
-let mockedDb;
+let mockedDb, booksDao;
 
 describe("Books Dao", () => {
     beforeEach(async () => {
         mockedDb = new MockedDb(config.dbConnection);
+        booksDao = new BooksDao(mockedDb);
     });
     afterEach(async () => {
         await mockedDb.connection.rollbackPromise();
     });
     
     it("should return 3 books when 1 is added", async () => {
-        const booksDao = new BooksDao(mockedDb);
         await booksDao.create({name: "test", author: "test"});
         const result = await booksDao.findAll();
         expect(result.length).to.equal(3);
     });
     
     it("should return 1 book when 1 is removed", async () => {
-        const booksDao = new BooksDao(mockedDb);
-        await booksDao.delete(142);
+        await booksDao.delete(2);
         const result = await booksDao.findAll();
         expect(result.length).to.equal(1);
-    });
-    
-    it("should return 2 books in default state", async () => {
-        const booksDao = new BooksDao(mockedDb);
-        const result = await booksDao.findAll();
-        expect(result.length).to.equal(2);
     });
 
     it("should return 4 books in create many tries to create 2 books", async () => {
@@ -50,9 +43,13 @@ describe("Books Dao", () => {
             {name: "test1", author: "test1"},
             {name: "test2", author: "test2"},
         ]
-        const booksDao = new BooksDao(mockedDb);
         await booksDao.createMany(books);
         const result = await booksDao.findAll();
         expect(result.length).to.equal(4);
+    });
+    
+    it("should return 2 books in default state", async () => {
+        const result = await booksDao.findAll();
+        expect(result.length).to.equal(2);
     });
 });
