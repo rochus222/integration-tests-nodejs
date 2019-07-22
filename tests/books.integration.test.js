@@ -3,19 +3,21 @@ const BooksDao = require("../model/books");
 const DbDriver = require("../util/db-driver");
 const { expect } = require("chai");
 
+let mockedDb, booksDao, rollback;
+
 class MockedDb extends DbDriver{
     async connect() {
         await DbDriver.prototype.connect.call(this);
         await this.connection.beginTransactionPromise();
+        rollback = this.connection.rollbackPromise;
         this.connection.commitPromise = () => Promise.resolve();
         this.connection.beginTransactionPromise = () => Promise.resolve();
+        this.connection.rollbackPromise = () => Promise.resolve();
     }
     async query(...args) {
         return DbDriver.prototype.query.call(this, ...args);
     }
 };
-
-let mockedDb, booksDao;
 
 describe("Books Dao", () => {
     beforeEach(async () => {
@@ -23,7 +25,7 @@ describe("Books Dao", () => {
         booksDao = new BooksDao(mockedDb);
     });
     afterEach(async () => {
-        await mockedDb.connection.rollbackPromise();
+        await rollback();
     });
     
     it("should return 3 books when 1 is added", async () => {
